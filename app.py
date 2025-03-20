@@ -1,11 +1,16 @@
-from flask import Flask, render_template, request, send_from_directory, send_file
+from flask import Flask, render_template, request, send_from_directory
 import os
 import io
 from pathlib import Path
 from PIL import Image
-from deoldify.visualize import get_image_colorizer
-import torch
+from deoldify.visualize import get_image_colorizer,torch
 import warnings
+
+#NOTE:  This must be the first call in order to work properly!
+from deoldify import device
+from deoldify.device_id import DeviceId
+#choices:  CPU, GPU0...GPU7
+device.set(device=DeviceId.CPU)
 
 # Optimize PyTorch settings
 torch.backends.cudnn.benchmark = True
@@ -26,7 +31,7 @@ colorizer = get_image_colorizer(artistic=True)
 def index():
     if request.method == "POST":
         file = request.files.get("image")
-        render_factor = int(request.form.get("render_factor", 25))  # Default 25
+        render_factor = int(request.form.get("render_factor", 15))  # Default 15
         watermarked = request.form.get("watermarked") == "yes"
 
         if file:
@@ -58,7 +63,11 @@ def index():
                 watermarked=watermarked,
             )
 
-    return render_template("index.html", render_factor=25)  # Default render factor
+    return render_template("index.html", render_factor=15)  # Default render factor
+
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 @app.route("/results/<filename>")
 def result_file(filename):

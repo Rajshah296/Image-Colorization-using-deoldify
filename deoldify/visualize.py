@@ -4,8 +4,8 @@ from matplotlib.axes import Axes
 from .filters import IFilter, MasterFilter, ColorizerFilter
 from .generators import gen_inference_deep, gen_inference_wide
 from PIL import Image
-import ffmpeg
-import yt_dlp as youtube_dl
+import ffmpeg # type: ignore
+import yt_dlp as youtube_dl # type: ignore
 import gc
 import requests
 from io import BytesIO
