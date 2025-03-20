@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Colorization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #333;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload a Black & White Image</h1>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" required><br><br>
+
+        <label for="render_factor">Render Factor (1-30):</label>
+        <input type="number" name="render_factor" min="1" max="30" value="{{ render_factor }}" required>
+        <br><br>
+
+        <label for="watermarked">Watermark:</label>
+        <select name="watermarked">
+            <option value="yes" {% if watermarked %}selected{% endif %}>Yes</option>
+            <option value="no" {% if not watermarked %}selected{% endif %}>No</option>
+        </select>
+        <br><br>
+
+        <button type="submit">Colorize</button>
+    </form>
+
+    {% if original_image %}
+        <h2>Original vs Colorized (Render Factor: {{ render_factor }})</h2>
+        <div class="container">
+            <img src="{{ url_for('uploaded_file', filename=original_image) }}" alt="Original Image">
+            <img src="{{ url_for('result_file', filename=colorized_image) }}" alt="Colorized Image">
+        </div>
+        <br>
+        <a href="{{ url_for('download_file', filename=colorized_image) }}" download>
+            <button>Download Colorized Image</button>
+        </a>
+    {% endif %}
+</body>
+</html>
